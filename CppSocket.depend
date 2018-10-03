@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1538514344 source:/home/mike/Socket/CppSocket/src/SocketReturn.cpp
+	"SocketReturn.h"
+
+1538514344 /home/mike/Socket/CppSocket/include/SocketReturn.h
+
