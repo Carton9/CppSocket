@@ -1,0 +1,7 @@
+            struct timeval tv;
+            FD_ZERO(&rfds);
+            FD_ZERO(&wfds);
+            FD_SET(sock_fd, &rfds);
+            FD_SET(sock_fd, &wfds);
+            tv.tv_sec = timeout/1000; 
+            tv.tv_usec = 0;

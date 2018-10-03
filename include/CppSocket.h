@@ -22,6 +22,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+
 using namespace std;
 
 class CppSocket
@@ -30,7 +32,7 @@ class CppSocket
         typedef void (* ErrorHandler)(Error e); // define the call back function for handle error
         typedef void (* RecevieHandler)(TransData* data,Error e); // define the call back function for handle recived data
         typedef bool (* VerfyHandler)(CppSocket* self); // define the verify funcation for TCP Connection
-        CppSocket(Service _service,int _socketfd);
+        CppSocket(Service _service,int _socketfd,InterAddr _addr);
         CppSocket(Service _service,InterAddr _addr);
         CppSocket(Service _service,char* addr,int port);
 
@@ -58,15 +60,16 @@ class CppSocket
     protected:
 
     private:
+        int timeout;
         mutex socketLock;
         int socketfd;
         InterAddr localAddress;
         Service service;
         InterAddr addr;
-        void _TCPClientSetUp();
-        void _TCPServerSetUp();
-        void _UDPSetUp();
-        void _SetUp();
+        Error TCPClientSetUp();
+        Error TCPServerSetUp();
+        Error UDPSetUp();
+        Error SetUp();
 };
 
 #endif // CPPSOCKET_H
