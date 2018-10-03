@@ -7,26 +7,32 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <unistd.h>
+#include <CppSocketTerm.h>
 #include <mutex>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/select.h>
+
+//inet_addr()
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 using namespace std;
 
-enum Service{TCP_Client,TCP_Server,UDP}; // this enum is use to indecate the transmisson protocol is using
-enum Error{NOERROR,INCURRECT_SERVICE,TIMEOUT,SOCKET_ERROR,CONNECTING_ERROR,ADDRESS_IN_USE};   // this enum is use to show the socket error in the transmission progress
 class CppSocket
 {
     public:
-
-
-        typedef struct sockaddr_in InterAddr;   // define the socket structure to InterAddr
-        typedef struct _receviedData{char* data;int length;InterAddr address;} TransData; // define a structure to store reviced data
         typedef void (* ErrorHandler)(Error e); // define the call back function for handle error
         typedef void (* RecevieHandler)(TransData* data,Error e); // define the call back function for handle recived data
-        typedef bool (* VerfyHandler)(CppSocket*); // define the verify funcation for TCP Connection
-
-
-        CppSocket(Service service,int _socketfd);
-        CppSocket(Service service,InterAddr addr);
-        CppSocket(Service service,char* addr,int port);
+        typedef bool (* VerfyHandler)(CppSocket* self); // define the verify funcation for TCP Connection
+        CppSocket(Service _service,int _socketfd);
+        CppSocket(Service _service,InterAddr _addr);
+        CppSocket(Service _service,char* addr,int port);
 
         Error sendData(TransData* data);
         void sendData(TransData* data,ErrorHandler handler);
@@ -55,8 +61,12 @@ class CppSocket
         mutex socketLock;
         int socketfd;
         InterAddr localAddress;
-
-
+        Service service;
+        InterAddr addr;
+        void _TCPClientSetUp();
+        void _TCPServerSetUp();
+        void _UDPSetUp();
+        void _SetUp();
 };
 
 #endif // CPPSOCKET_H
