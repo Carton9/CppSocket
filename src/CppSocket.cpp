@@ -31,7 +31,12 @@ CppSocket::CppSocket(Service _service,char* addr,int port){
 }
 
 Error CppSocket::sendData(TransData* data){
-    return NOERROR;
+    if(service==UDP)
+        return sendUDPData(data);
+    else if(service==TCP_Client)
+        return sendTCPClientData(data);
+    else if(service==TCP_Server)
+        return sendTCPServerData(data);
 }
 void CppSocket::sendData(TransData* data,ErrorHandler handler){
     Error e=sendData(data);
@@ -39,7 +44,12 @@ void CppSocket::sendData(TransData* data,ErrorHandler handler){
 }
 
 Error CppSocket::recevieData(int length,TransData* data){
-    return NOERROR;
+    if(service==UDP)
+        return recevieUDPData(length,data);
+    else if(service==TCP_Client)
+        return recevieTCPClientData(length,data);
+    else if(service==TCP_Server)
+        return recevieTCPServerData(length,data);
 }
 void CppSocket::recevieData(int length,TransData* data,ErrorHandler handler){
     Error e=recevieData(length,data);
@@ -114,6 +124,8 @@ bool CppSocket::isConnected(){
 }
 bool CppSocket::isClosed(){
 }
+
+
 Error CppSocket::TCPClientSetUp(){
     return NOERROR;
 }
@@ -137,6 +149,23 @@ Error CppSocket::SetUp(){
         TCPClientSetUp();
     else if(service==TCP_Server)
         TCPServerSetUp();
+}
+
+Error CppSocket::sendTCPClientData(TransData* data){
+
+}
+Error CppSocket::sendTCPServerData(TransData* data){
+    return INCURRECT_SERVICE;
+}
+Error CppSocket::sendUDPData(TransData* data){
+}
+
+Error CppSocket::recevieTCPClientData(int length,TransData* data){
+}
+Error CppSocket::recevieTCPServerData(int length,TransData* data){
+    return INCURRECT_SERVICE;
+}
+Error CppSocket::recevieUDPData(int length,TransData* data){
 }
 CppSocket::~CppSocket(){
 
