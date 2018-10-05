@@ -78,6 +78,8 @@ class CppSocket
         Error recevieTCPServerData(int length,TransData* data);
         Error recevieUDPData(int length,TransData* data);
 
+        char* getRemain(int finishLength,int total,char* sdata);
+
         Error SetUp();
 };
 

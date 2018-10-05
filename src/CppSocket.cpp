@@ -156,8 +156,9 @@ Error CppSocket::sendTCPClientData(TransData* data){
     int sendingLength=data->length;
     InterAddr addr=data->address;
     clock_t init=clock();
+    int readLength=0;
     while(1){
-         int res=send(socketfd,sendingData,sendingLength,0);
+         int res=send(socketfd,getRemain(readLength,sendingLength,sendingData),sendingLength,0);
          if(res==sendingLength)
             return NOERROR;
          if(res<0){
@@ -167,23 +168,55 @@ Error CppSocket::sendTCPClientData(TransData* data){
             }else{
                 return SOCKET_ERROR;
             }
+         }else if(res==sendingLength-read){
+            return NOERROR;
+         }else{
+            readLenth=res;
          }
     }
-
-
 }
 Error CppSocket::sendTCPServerData(TransData* data){
     return INCURRECT_SERVICE;
 }
 Error CppSocket::sendUDPData(TransData* data){
+    char* sendingData=data->dataBuff;
+    int sendingLength=data->length;
+    InterAddr addr=data->address;
+    clock_t init=clock();
+    int readLength=0;
+    while(1){
+         int res=sendto(socketfd,getRemain(readLength,sendingLength,sendingData),sendingLength,0,(sockaddr*)&addr,sizeof(InterAddr));
+         if(res==sendingLength)
+            return NOERROR;
+         if(res<0){
+            if(errno==EAGAIN){
+                if(clock()-init>timeout)
+                return TIMEOUT;
+            }else{
+                return SOCKET_ERROR;
+            }
+         }else if(res==sendingLength-read){
+            return NOERROR;
+         }else{
+            readLenth=res;
+         }
+
+    }
 }
 
 Error CppSocket::recevieTCPClientData(int length,TransData* data){
+
 }
 Error CppSocket::recevieTCPServerData(int length,TransData* data){
     return INCURRECT_SERVICE;
 }
 Error CppSocket::recevieUDPData(int length,TransData* data){
+
+}
+char* CppSocket::getRemain(int finishLength,int total,char* sdata){
+    char* ddata=(char*)malloc((total-finishLength)*sizeof(char));
+    memcpy(ddata,sdata+finishLength,(total-finishLength)*sizeof(char));
+    return ddata;
 }
 CppSocket::~CppSocket(){
 
