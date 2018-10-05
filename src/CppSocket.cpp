@@ -152,6 +152,18 @@ Error CppSocket::SetUp(){
 }
 
 Error CppSocket::sendTCPClientData(TransData* data){
+    char* sendingData=data->dataBuff;
+    int sendingLength=data->length;
+    InterAddr addr=data->address;
+    while(1){
+         int res=send(socketfd,sendingData,sendingLength,0);
+         if(res==sendingLength)
+            return NOERROR;
+         if(res<0){
+
+         }
+    }
+
 
 }
 Error CppSocket::sendTCPServerData(TransData* data){
