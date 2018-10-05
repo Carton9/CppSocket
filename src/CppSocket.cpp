@@ -155,12 +155,18 @@ Error CppSocket::sendTCPClientData(TransData* data){
     char* sendingData=data->dataBuff;
     int sendingLength=data->length;
     InterAddr addr=data->address;
+    clock_t init=clock();
     while(1){
          int res=send(socketfd,sendingData,sendingLength,0);
          if(res==sendingLength)
             return NOERROR;
          if(res<0){
-
+            if(errno==EAGAIN){
+                if(clock()-init>timeout)
+                return TIMEOUT;
+            }else{
+                return SOCKET_ERROR;
+            }
          }
     }
 
