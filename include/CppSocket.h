@@ -69,6 +69,15 @@ class CppSocket
         Error TCPClientSetUp();
         Error TCPServerSetUp();
         Error UDPSetUp();
+
+        Error sendTCPClientData(TransData* data);
+        Error sendTCPServerData(TransData* data);
+        Error sendUDPData(TransData* data);
+
+        Error recevieTCPClientData(int length,TransData* data);
+        Error recevieTCPServerData(int length,TransData* data);
+        Error recevieUDPData(int length,TransData* data);
+
         Error SetUp();
 };
 
