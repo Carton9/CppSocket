@@ -1,6 +1,9 @@
 #include "CppSocket.h"
 #include <time.h>
 #define DefultTimeOut 10000
+
+#define DefultBufferSize 1024
+
 CppSocket::CppSocket(Service _service,int _socketfd,InterAddr _addr){
     timeout=DefultTimeOut;
     addr=_addr;
@@ -182,6 +185,8 @@ Error CppSocket::sendUDPData(TransData* data){
     char* sendingData=data->dataBuff;
     int sendingLength=data->length;
     InterAddr addr=data->address;
+    if(sendingLength>DefultBufferSize)
+        return INVALID_SIZE;
     clock_t init=clock();
     int readLength=0;
     while(1){
@@ -205,7 +210,8 @@ Error CppSocket::sendUDPData(TransData* data){
 }
 
 Error CppSocket::recevieTCPClientData(int length,TransData* data){
-
+    if(){
+    }
 }
 Error CppSocket::recevieTCPServerData(int length,TransData* data){
     return INCURRECT_SERVICE;

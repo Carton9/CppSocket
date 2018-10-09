@@ -2,72 +2,45 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="include/CppSocket.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/CppSocketTerm.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-<<<<<<< HEAD
-			<Cursor1 position="2525" topLine="46" />
-=======
-<<<<<<< HEAD
-			<Cursor1 position="1907" topLine="45" />
-=======
-			<Cursor1 position="2401" topLine="44" />
->>>>>>> b6f5f761d4eb3f1c435b21c24f9ce60db5cc222d
->>>>>>> 46732ebf2e6ee2b0656709cc1fd7edfde71b2f78
+			<Cursor1 position="307" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="src/CppSocket.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-<<<<<<< HEAD
-			<Cursor1 position="5857" topLine="129" />
-=======
-<<<<<<< HEAD
-			<Cursor1 position="3412" topLine="4" />
-=======
-			<Cursor1 position="4787" topLine="3" />
->>>>>>> b6f5f761d4eb3f1c435b21c24f9ce60db5cc222d
->>>>>>> 46732ebf2e6ee2b0656709cc1fd7edfde71b2f78
+			<Cursor1 position="6439" topLine="22" />
 		</Cursor>
 		<Folding>
-			<Collapse line="3" />
-			<Collapse line="11" />
-			<Collapse line="21" />
-<<<<<<< HEAD
-			<Collapse line="40" />
+			<Collapse line="6" />
+			<Collapse line="14" />
+			<Collapse line="24" />
+			<Collapse line="35" />
 			<Collapse line="43" />
 			<Collapse line="48" />
-			<Collapse line="88" />
-=======
-			<Collapse line="32" />
-			<Collapse line="40" />
-			<Collapse line="45" />
-			<Collapse line="53" />
-<<<<<<< HEAD
-=======
-			<Collapse line="98" />
-			<Collapse line="108" />
+			<Collapse line="56" />
+			<Collapse line="61" />
+			<Collapse line="101" />
 			<Collapse line="111" />
-			<Collapse line="113" />
-			<Collapse line="115" />
-			<Collapse line="120" />
-			<Collapse line="122" />
-			<Collapse line="124" />
-			<Collapse line="128" />
+			<Collapse line="114" />
+			<Collapse line="116" />
+			<Collapse line="118" />
+			<Collapse line="123" />
+			<Collapse line="125" />
+			<Collapse line="127" />
 			<Collapse line="131" />
-			<Collapse line="138" />
-			<Collapse line="144" />
+			<Collapse line="134" />
+			<Collapse line="141" />
+			<Collapse line="142" />
+			<Collapse line="147" />
 			<Collapse line="156" />
-			<Collapse line="159" />
-			<Collapse line="162" />
-			<Collapse line="164" />
-			<Collapse line="167" />
-			<Collapse line="169" />
->>>>>>> b6f5f761d4eb3f1c435b21c24f9ce60db5cc222d
->>>>>>> 46732ebf2e6ee2b0656709cc1fd7edfde71b2f78
+			<Collapse line="180" />
+			<Collapse line="191" />
 		</Folding>
 	</File>
-	<File name="include/CppSocketTerm.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/CppSocket.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="522" topLine="0" />
+			<Cursor1 position="2401" topLine="44" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
