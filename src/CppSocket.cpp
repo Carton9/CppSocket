@@ -11,6 +11,7 @@ CppSocket::CppSocket(Service _service,int _socketfd,InterAddr _addr){
     service=service;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
+    isSetValue=true;
 }
 CppSocket::CppSocket(Service _service,InterAddr addr){
     timeout=DefultTimeOut;
@@ -21,6 +22,7 @@ CppSocket::CppSocket(Service _service,InterAddr addr){
     service=service;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
+    isSetValue=true;
 }
 CppSocket::CppSocket(Service _service,char* addr,int port){
     timeout=DefultTimeOut;
@@ -31,6 +33,7 @@ CppSocket::CppSocket(Service _service,char* addr,int port){
     service=service;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
+
 }
 
 Error CppSocket::sendData(TransData* data){
@@ -97,6 +100,7 @@ Error CppSocket::connectTo(InterAddr remoteAddr){// this function can only use f
             return CONNECTING_ERROR;
         }
      }
+     isConnectedValue=true;
     return NOERROR;
 }
 void CppSocket::connectTo(InterAddr remoteAddr,ErrorHandler errorHandler,VerfyHandler verfyHandler){// this function can only use for TCP Client
@@ -109,7 +113,28 @@ void CppSocket::connectTo(InterAddr remoteAddr,ErrorHandler errorHandler,VerfyHa
      errorHandler(e);
 }
 
-CppSocket* CppSocket::accept(ErrorHandler errorHandler,VerfyHandler verfyHandler){
+CppSocket* CppSocket::acceptClient(ErrorHandler errorHandler,VerfyHandler verfyHandler){
+    int client_sockfd;
+    InterAddr remote_addr;
+    unsigned int sin_size=sizeof(struct sockaddr_in);
+    if((client_sockfd=accept(socketfd,(struct sockaddr *)&remote_addr,&sin_size))<0){
+        Error e;
+        if(errno==EAGAIN||errno==EWOULDBLOCK){
+            e=NON_CLIENT_IN_LINE;
+        }else if(errno=ECONNABORTED){
+            e=END_CONNECTION;
+        }else if(errno=EBADF){
+            e=NOT_FD;
+        }
+        errorHandler(e);
+        return NULL;
+	}
+    CppSocket* socket=new CppSocket(TCP_Client,client_sockfd,remote_addr);
+    if(verfyHandler(socket)){
+        socket->isConnectedValue=true;
+        return socket;
+    }
+    return NULL;
 }
 
 Error CppSocket::stopSocket(){
@@ -122,10 +147,13 @@ Error CppSocket::setTimeOut(int time){ // time in millier second
 }
 
 bool CppSocket::isSocketSet(){
+    return isSetValue;
 }
 bool CppSocket::isConnected(){
+    return isConnectedValue;
 }
 bool CppSocket::isClosed(){
+    return isClosedValue;
 }
 
 
@@ -171,10 +199,10 @@ Error CppSocket::sendTCPClientData(TransData* data){
             }else{
                 return SOCKET_ERROR;
             }
-         }else if(res==sendingLength-read){
+         }else if(res==(sendingLength-readLength)){
             return NOERROR;
          }else{
-            readLenth=res;
+            readLength=res;
          }
     }
 }
@@ -200,18 +228,20 @@ Error CppSocket::sendUDPData(TransData* data){
             }else{
                 return SOCKET_ERROR;
             }
-         }else if(res==sendingLength-read){
+         }else if(res==(sendingLength-readLength)){
             return NOERROR;
          }else{
-            readLenth=res;
+            readLength=res;
          }
 
     }
 }
 
 Error CppSocket::recevieTCPClientData(int length,TransData* data){
-    if(){
-    }
+    char* buff=(char*)malloc(sizeof(char)*length);
+    len=recv(socketfd,buff,length,0);
+    if(len<0)
+        return SOCKET_ERROR;
 }
 Error CppSocket::recevieTCPServerData(int length,TransData* data){
     return INCURRECT_SERVICE;

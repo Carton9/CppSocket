@@ -45,7 +45,7 @@ class CppSocket
         Error connectTo(InterAddr addr);// this function can only use for TCP Client
         void connectTo(InterAddr addr,ErrorHandler errorHandler,VerfyHandler verfyHandler);// this function can only use for TCP Client
 
-        CppSocket* accept(ErrorHandler errorHandler,VerfyHandler verfyHandler);
+        CppSocket* acceptClient(ErrorHandler errorHandler,VerfyHandler verfyHandler);
 
         Error stopSocket();
         Error reconnect(); // this function can only use for TCP Client
@@ -66,6 +66,10 @@ class CppSocket
         InterAddr localAddress;
         Service service;
         InterAddr addr;
+        bool isSetValue;
+        bool isConnectedValue;
+        bool isClosedValue;
+
         Error TCPClientSetUp();
         Error TCPServerSetUp();
         Error UDPSetUp();
