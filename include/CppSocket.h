@@ -65,7 +65,7 @@ class CppSocket
         int socketfd;
         InterAddr localAddress;
         Service service;
-        InterAddr addr;
+        InterAddr remoteAddress;
         bool isSetValue;
         bool isConnectedValue;
         bool isClosedValue;

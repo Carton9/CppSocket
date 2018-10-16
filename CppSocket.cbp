@@ -38,6 +38,7 @@
 		<Unit filename="include/SocketReturn.h" />
 		<Unit filename="src/CppSocket.cpp" />
 		<Unit filename="src/SocketReturn.cpp" />
+		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

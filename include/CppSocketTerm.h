@@ -15,7 +15,8 @@ ADDRESS_IN_USE,
 INVALID_SIZE,
 NON_CLIENT_IN_LINE,
 NOT_FD,END_CONNECTION,
-INERRUPT};   // this enum is use to show the socket error in the transmission progress
+INERRUPT,
+SOCKET_CLOSE};   // this enum is use to show the socket error in the transmission progress
 
 typedef struct sockaddr_in InterAddr;   // define the socket structure to InterAddr
 typedef struct _receviedData{char* dataBuff;int length;InterAddr address;} TransData; // define a structure to store reviced data

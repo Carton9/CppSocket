@@ -6,20 +6,21 @@
 
 CppSocket::CppSocket(Service _service,int _socketfd,InterAddr _addr){
     timeout=DefultTimeOut;
-    addr=_addr;
+    localAddress=_addr;
     socketfd=_socketfd;
     service=service;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
     isSetValue=true;
 }
-CppSocket::CppSocket(Service _service,InterAddr addr){
+CppSocket::CppSocket(Service _service,InterAddr _addr){
     timeout=DefultTimeOut;
     if(service==UDP)
         socketfd=socket(AF_INET, SOCK_DGRAM, 0);
     else
         socketfd=socket(AF_INET, SOCK_STREAM, 0);
     service=service;
+    localAddress=_addr;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
     isSetValue=true;
@@ -33,7 +34,10 @@ CppSocket::CppSocket(Service _service,char* addr,int port){
     service=service;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
-
+    localAddress.sin_family=AF_INET;
+	localAddress.sin_addr.s_addr=inet_addr(addr);
+	localAddress.sin_port=htons(port);
+    isSetValue=true;
 }
 
 Error CppSocket::sendData(TransData* data){
@@ -84,7 +88,7 @@ Error CppSocket::connectTo(InterAddr remoteAddr){// this function can only use f
                 return TIMEOUT;
             default:
                 if (FD_ISSET(socketfd, &rfds) || FD_ISSET(socketfd, &wfds)){
-                    connect(socketfd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
+                    connect(socketfd, (struct sockaddr *)&remoteAddr, sizeof(struct sockaddr_in));
                     int err = errno;
                     if(err == EISCONN){
                         return CONNECTING_ERROR;
@@ -101,6 +105,7 @@ Error CppSocket::connectTo(InterAddr remoteAddr){// this function can only use f
         }
      }
      isConnectedValue=true;
+     remoteAddress=remoteAddr;
     return NOERROR;
 }
 void CppSocket::connectTo(InterAddr remoteAddr,ErrorHandler errorHandler,VerfyHandler verfyHandler){// this function can only use for TCP Client
@@ -129,7 +134,8 @@ CppSocket* CppSocket::acceptClient(ErrorHandler errorHandler,VerfyHandler verfyH
         errorHandler(e);
         return NULL;
 	}
-    CppSocket* socket=new CppSocket(TCP_Client,client_sockfd,remote_addr);
+    CppSocket* socket=new CppSocket(TCP_Client,client_sockfd,localAddress);
+    socket->remoteAddress=remote_addr;
     if(verfyHandler(socket)){
         socket->isConnectedValue=true;
         return socket;
@@ -138,6 +144,7 @@ CppSocket* CppSocket::acceptClient(ErrorHandler errorHandler,VerfyHandler verfyH
 }
 
 Error CppSocket::stopSocket(){
+    isClosedValue=true;
 }
 Error CppSocket::reconnect(){// this function can only use for TCP Client
 }
@@ -161,14 +168,14 @@ Error CppSocket::TCPClientSetUp(){
     return NOERROR;
 }
 Error CppSocket::TCPServerSetUp(){
-    if(bind(socketfd,(struct sockaddr *)&addr,sizeof(struct sockaddr))<0)
+    if(bind(socketfd,(struct sockaddr *)&localAddress,sizeof(struct sockaddr))<0)
 		return BINDING_ERROR;
     if(listen(socketfd,5)<0)
         return LISTENING_ERROR;
     return NOERROR;
 }
 Error CppSocket::UDPSetUp(){
-    if (bind(socketfd, (sockaddr *)&addr, sizeof(addr)) == -1) {
+    if (bind(socketfd, (sockaddr *)&localAddress, sizeof(localAddress)) == -1) {
         return BINDING_ERROR;
     }
     return NOERROR;
@@ -238,10 +245,33 @@ Error CppSocket::sendUDPData(TransData* data){
 }
 
 Error CppSocket::recevieTCPClientData(int length,TransData* data){
+    Error e=NOERROR;
+    char* result=(char*)malloc(sizeof(char)*length);
     char* buff=(char*)malloc(sizeof(char)*length);
-    len=recv(socketfd,buff,length,0);
-    if(len<0)
-        return SOCKET_ERROR;
+    int unreadLength=length;
+    clock_t init=clock();
+    while(unreadLength>0){
+        int len=recv(socketfd,buff,unreadLength,0);
+        if(isClosedValue){
+            e=SOCKET_CLOSE;
+            break;
+        }
+        if(len<0&&errno==ECONNRESET){
+            e=CONNECTING_ERROR;
+            break;
+        }
+        else if(len<=unreadLength){
+            unreadLength=unreadLength-len;
+            memcpy(result+(length-unreadLength),buff,len);
+        }if(clock()-init>timeout){
+            e=TIMEOUT;
+            break;
+        }
+    }
+    data->address=remoteAddress;
+    data->dataBuff=result;
+    data->length=length-unreadLength;
+    return e;
 }
 Error CppSocket::recevieTCPServerData(int length,TransData* data){
     return INCURRECT_SERVICE;
