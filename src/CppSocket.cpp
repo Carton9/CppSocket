@@ -2,7 +2,7 @@
 #include <time.h>
 #define DefultTimeOut 10000
 
-#define DefultBufferSize 1024
+#define DefultBufferSize 4096
 
 CppSocket::CppSocket(Service _service,int _socketfd,InterAddr _addr){
     timeout=DefultTimeOut;
@@ -277,7 +277,23 @@ Error CppSocket::recevieTCPServerData(int length,TransData* data){
     return INCURRECT_SERVICE;
 }
 Error CppSocket::recevieUDPData(int length,TransData* data){
-
+    byte* buff=(byte*)malloc(sizeof(char)*DefultBufferSize);
+    InterAddr remoteAddress;
+    unsigned int len=sizeof(cliaddr);
+    int n=0;
+    while(n<1){
+        n = recvfrom(socketfd, buff, DefultBufferSize, 0, (sockaddr *)&remoteAddress, &len);
+        if(n==-1&&errno==EAGAIN&&errno==EWOULDBLOCK){
+            if(clock()-init>timeout)
+                return TIMEOUT;
+        }else if(n==-1){
+            return SOCKET_ERROR;
+        }
+    }
+    data->address=remoteAddress;
+    data->dataBuff=buff;
+    data->length=n;
+    return NOERROR;
 }
 char* CppSocket::getRemain(int finishLength,int total,char* sdata){
     char* ddata=(char*)malloc((total-finishLength)*sizeof(char));
