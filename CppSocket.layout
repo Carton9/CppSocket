@@ -2,14 +2,30 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
+	<File name="src/main.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="324" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/CppSocket.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9055" topLine="153" />
+		</Cursor>
+		<Folding>
+			<Collapse line="68" />
+			<Collapse line="110" />
+			<Collapse line="120" />
+			<Collapse line="145" />
+			<Collapse line="148" />
+			<Collapse line="150" />
+			<Collapse line="155" />
+			<Collapse line="158" />
+			<Collapse line="161" />
+		</Folding>
+	</File>
 	<File name="src/SocketReturn.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src/main.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="53" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="include/CppSocket.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -21,16 +37,5 @@
 		<Cursor>
 			<Cursor1 position="383" topLine="0" />
 		</Cursor>
-	</File>
-	<File name="src/CppSocket.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="42" />
-			<Collapse line="50" />
-			<Collapse line="68" />
-			<Collapse line="110" />
-		</Folding>
 	</File>
 </CodeBlocks_layout_file>

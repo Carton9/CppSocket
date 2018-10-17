@@ -1,7 +1,7 @@
 #include "CppSocket.h"
 #include <time.h>
 #define DefultTimeOut 10000
-
+#define byte char
 #define DefultBufferSize 4096
 
 CppSocket::CppSocket(Service _service,int _socketfd,InterAddr _addr){
@@ -240,7 +240,6 @@ Error CppSocket::sendUDPData(TransData* data){
          }else{
             readLength=res;
          }
-
     }
 }
 
@@ -268,6 +267,7 @@ Error CppSocket::recevieTCPClientData(int length,TransData* data){
             break;
         }
     }
+    free(buff);
     data->address=remoteAddress;
     data->dataBuff=result;
     data->length=length-unreadLength;
@@ -277,10 +277,11 @@ Error CppSocket::recevieTCPServerData(int length,TransData* data){
     return INCURRECT_SERVICE;
 }
 Error CppSocket::recevieUDPData(int length,TransData* data){
-    byte* buff=(byte*)malloc(sizeof(char)*DefultBufferSize);
+    byte* buff=(byte*)malloc(sizeof(char)*DefultBufferSize*2);
     InterAddr remoteAddress;
-    unsigned int len=sizeof(cliaddr);
+    unsigned int len=sizeof(remoteAddress);
     int n=0;
+    clock_t init=clock();
     while(n<1){
         n = recvfrom(socketfd, buff, DefultBufferSize, 0, (sockaddr *)&remoteAddress, &len);
         if(n==-1&&errno==EAGAIN&&errno==EWOULDBLOCK){
@@ -290,9 +291,12 @@ Error CppSocket::recevieUDPData(int length,TransData* data){
             return SOCKET_ERROR;
         }
     }
+    char* result=(char*)malloc(sizeof(char)*n);
+    memcpy(result,buff,n);
     data->address=remoteAddress;
-    data->dataBuff=buff;
+    data->dataBuff=result;
     data->length=n;
+    free(buff);
     return NOERROR;
 }
 char* CppSocket::getRemain(int finishLength,int total,char* sdata){
