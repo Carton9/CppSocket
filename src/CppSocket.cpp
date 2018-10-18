@@ -8,35 +8,41 @@ CppSocket::CppSocket(Service _service,int _socketfd,InterAddr _addr){
     timeout=DefultTimeOut;
     localAddress=_addr;
     socketfd=_socketfd;
-    service=service;
+    service=_service;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
+    SetUp();
     isSetValue=true;
+
 }
 CppSocket::CppSocket(Service _service,InterAddr _addr){
     timeout=DefultTimeOut;
+    service=_service;
     if(service==UDP)
         socketfd=socket(AF_INET, SOCK_DGRAM, 0);
     else
         socketfd=socket(AF_INET, SOCK_STREAM, 0);
-    service=service;
     localAddress=_addr;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
+    SetUp();
     isSetValue=true;
+
 }
 CppSocket::CppSocket(Service _service,char* addr,int port){
     timeout=DefultTimeOut;
+    service=_service;
     if(service==UDP)
-        socketfd=socket(AF_INET, SOCK_DGRAM, 0);
+        socketfd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     else
         socketfd=socket(AF_INET, SOCK_STREAM, 0);
-    service=service;
     int flags = fcntl(socketfd, F_GETFL, 0);
     fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
     localAddress.sin_family=AF_INET;
 	localAddress.sin_addr.s_addr=inet_addr(addr);
 	localAddress.sin_port=htons(port);
+	SetUp();
+
     isSetValue=true;
 }
 
@@ -181,6 +187,7 @@ Error CppSocket::UDPSetUp(){
     return NOERROR;
 }
 Error CppSocket::SetUp(){
+
     if(service==UDP)
         UDPSetUp();
     else if(service==TCP_Client)
@@ -225,7 +232,7 @@ Error CppSocket::sendUDPData(TransData* data){
     clock_t init=clock();
     int readLength=0;
     while(1){
-         int res=sendto(socketfd,getRemain(readLength,sendingLength,sendingData),sendingLength,0,(sockaddr*)&addr,sizeof(InterAddr));
+         int res=sendto(socketfd,sendingData,sendingLength,0,(struct sockaddr*)&addr,sizeof(addr));
          if(res==sendingLength)
             return NOERROR;
          if(res<0){
@@ -284,7 +291,8 @@ Error CppSocket::recevieUDPData(int length,TransData* data){
     clock_t init=clock();
     while(n<1){
         n = recvfrom(socketfd, buff, DefultBufferSize, 0, (sockaddr *)&remoteAddress, &len);
-        if(n==-1&&errno==EAGAIN&&errno==EWOULDBLOCK){
+
+        if(n==-1&&(errno==EAGAIN||errno==EWOULDBLOCK)) {
             if(clock()-init>timeout)
                 return TIMEOUT;
         }else if(n==-1){
