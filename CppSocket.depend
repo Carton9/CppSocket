@@ -4,7 +4,7 @@
 
 1538514344 /home/mike/Socket/CppSocket/include/SocketReturn.h
 
-1539892591 source:/home/mike/CppSocket/src/CppSocket.cpp
+1539960871 source:/home/mike/CppSocket/src/CppSocket.cpp
 	"CppSocket.h"
 	<time.h>
 
@@ -37,6 +37,6 @@
 
 1539629188 /home/mike/CppSocket/include/CppSocketTerm.h
 
-1539890600 source:/home/mike/CppSocket/src/main.cpp
+1539960832 source:/home/mike/CppSocket/src/main.cpp
 	"CppSocket.h"
 
