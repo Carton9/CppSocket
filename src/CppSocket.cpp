@@ -194,7 +194,6 @@ Error CppSocket::UDPSetUp(){
     return NOERROR;
 }
 Error CppSocket::SetUp(){
-
     if(service==UDP)
         UDPSetUp();
     else if(service==TCP_Client)
@@ -266,8 +265,6 @@ Error CppSocket::recevieTCPClientData(int length,TransData* data){
     clock_t init=clock();
     while(unreadLength>0){
         int len=recv(socketfd,buff,unreadLength,0);
-        printf("3, %d,%d\n",len,EAGAIN);
-
         if(isClosedValue){
             e=SOCKET_CLOSE;
             break;
