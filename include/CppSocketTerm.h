@@ -14,7 +14,8 @@ CONNECTING_ERROR,
 ADDRESS_IN_USE,
 INVALID_SIZE,
 NON_CLIENT_IN_LINE,
-NOT_FD,END_CONNECTION,
+NOT_FD,
+END_CONNECTION,
 INERRUPT,
 SOCKET_CLOSE};   // this enum is use to show the socket error in the transmission progress
 
