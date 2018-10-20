@@ -227,19 +227,23 @@ Error CppSocket::TCPClientSetUp(){
     return NOERROR;
 }
 Error CppSocket::TCPServerSetUp(){
+    //bind socket to a local address
     if(bind(socketfd,(struct sockaddr *)&localAddress,sizeof(struct sockaddr))<0)
 		return BINDING_ERROR;
+    // set up listener length
     if(listen(socketfd,5)<0)
         return LISTENING_ERROR;
     return NOERROR;
 }
 Error CppSocket::UDPSetUp(){
+    //bind socket to a local address
     if (bind(socketfd, (sockaddr *)&localAddress, sizeof(localAddress)) == -1) {
         return BINDING_ERROR;
     }
     return NOERROR;
 }
 Error CppSocket::SetUp(){
+    //set up socket base on data type
     if(service==UDP)
         UDPSetUp();
     else if(service==TCP_Client)
@@ -249,46 +253,55 @@ Error CppSocket::SetUp(){
 }
 
 Error CppSocket::sendTCPClientData(TransData* data){
+    // read data from from TransData
     char* sendingData=data->dataBuff;
     int sendingLength=data->length;
     InterAddr addr=data->address;
+    //mark the beginning time
     clock_t init=clock();
     int readLength=0;
     while(1){
+        // send data to socket
          int res=send(socketfd,getRemain(readLength,sendingLength,sendingData),sendingLength,0);
+
          if(res==sendingLength)
             return NOERROR;
          if(res<0){
-            if(errno==EAGAIN){
+            if(errno==EAGAIN){//if socket is busy wait for later
                 if(clock()-init>timeout)
-                return TIMEOUT;
+                    return TIMEOUT;
             }else{
                 return SOCKET_ERROR;
             }
          }else if(res==(sendingLength-readLength)){
             return NOERROR;
          }else{
-            readLength=res;
+            readLength=res;//mark the length is sended
          }
     }
 }
 Error CppSocket::sendTCPServerData(TransData* data){
+    // TCPServer do not support sending and receiving data
     return INCURRECT_SERVICE;
 }
 Error CppSocket::sendUDPData(TransData* data){
+     // read data from from TransData
     char* sendingData=data->dataBuff;
     int sendingLength=data->length;
     InterAddr addr=data->address;
+     //mark the beginning time
     if(sendingLength>DEFAULT_BUFFER_SIZE)
         return INVALID_SIZE;
+    //mark the beginning time
     clock_t init=clock();
     int readLength=0;
     while(1){
+        // send packet to socketfd
          int res=sendto(socketfd,sendingData,sendingLength,0,(struct sockaddr*)&addr,sizeof(addr));
          if(res==sendingLength)
             return NOERROR;
          if(res<0){
-            if(errno==EAGAIN){
+            if(errno==EAGAIN){//if socket is busy wait for later
                 if(clock()-init>timeout)
                 return TIMEOUT;
             }else{
@@ -297,69 +310,76 @@ Error CppSocket::sendUDPData(TransData* data){
          }else if(res==(sendingLength-readLength)){
             return NOERROR;
          }else{
-            readLength=res;
+            readLength=res;//mark the length is sended
          }
     }
 }
 
 Error CppSocket::recevieTCPClientData(int length,TransData* data){
-
     Error e=NOERROR;
+    // set up receiving buffer
     char* result=(char*)malloc(sizeof(char)*length);
     char* buff=(char*)malloc(sizeof(char)*length);
     int unreadLength=length;
+    //mark the beginning time
     clock_t init=clock();
     while(unreadLength>0){
+        // receive packet
         int len=recv(socketfd,buff,unreadLength,0);
+        // if socket closed, throw error
         if(isClosedValue){
             e=SOCKET_CLOSE;
             break;
         }
-
+        // oppsite close the connection
         if(len<0&&errno==ECONNRESET){
             e=CONNECTING_ERROR;
             break;
         }
         else if(len<0){
-            if(errno==EAGAIN){
+            if(errno==EAGAIN){// when socket is not ready wait for next loop
                 if(clock()-init>timeout)
-                return TIMEOUT;
+                return TIMEOUT;// when time out throw exception
             }else{
                 return SOCKET_ERROR;
             }
          }else if(len<=unreadLength){
-            printf("4\n");
             unreadLength=unreadLength-len;
-            memcpy(result,buff,len);
+            memcpy(result,buff,len);//copy data to result byte array
         }
     }
-    free(buff);
+    free(buff);// free buffer
+    // load data to TransData pointer
     data->address=remoteAddress;
     data->dataBuff=result;
     data->length=length-unreadLength;
     return e;
 }
 Error CppSocket::recevieTCPServerData(int length,TransData* data){
+    // TCPServer do not support sending and receiving data
     return INCURRECT_SERVICE;
 }
 Error CppSocket::recevieUDPData(int length,TransData* data){
+    // set up receiving buffer and remoteAddress
     byte* buff=(byte*)malloc(sizeof(char)*DEFAULT_BUFFER_SIZE*2);
     InterAddr remoteAddress;
     unsigned int len=sizeof(remoteAddress);
     int n=0;
+    //mark the beginning time
     clock_t init=clock();
     while(n<1){
+        //receive packet from socket
         n = recvfrom(socketfd, buff, DEFAULT_BUFFER_SIZE, 0, (sockaddr *)&remoteAddress, &len);
-
         if(n==-1&&(errno==EAGAIN||errno==EWOULDBLOCK)) {
             if(clock()-init>timeout)
                 return TIMEOUT;
         }else if(n==-1){
-            return SOCKET_ERROR;
+            return SOCKET_ERROR;// return if socket have error
         }
     }
     char* result=(char*)malloc(sizeof(char)*n);
     memcpy(result,buff,n);
+    // save data to TransData
     data->address=remoteAddress;
     data->dataBuff=result;
     data->length=n;
