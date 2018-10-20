@@ -331,7 +331,7 @@ Error CppSocket::recevieTCPClientData(int length,TransData* data){
             e=SOCKET_CLOSE;
             break;
         }
-        // oppsite close the connection
+        // close the connection on the opposite side
         if(len<0&&errno==ECONNRESET){
             e=CONNECTING_ERROR;
             break;
